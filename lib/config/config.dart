@@ -12,7 +12,7 @@ GraphQLClient get mainAPI {
     );
   
 }
-ValueNotifier<GraphQLClient> customClient(String token){
+ValueNotifier<GraphQLClient> customClient(){
 Link httpLink = HttpLink(uri: "https://revocabulary.glitch.me/graphql");
  var client = ValueNotifier(GraphQLClient(
       cache: NormalizedInMemoryCache(dataIdFromObject: typenameDataIdFromObject), link: httpLink));
