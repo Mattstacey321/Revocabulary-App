@@ -135,9 +135,11 @@ Widget buildLoadMore() {
 
 Widget buildWordItem(BuildContext context, String id, String word, String meaning, String audio) {
   GraphQLQuery query = GraphQLQuery();
+  var screenSize = MediaQuery.of(context).size;
   return InkWell(
     onTap: () {
       showMaterialModalBottomSheet(
+          enableDrag: false,
           useRootNavigator: true,
           expand: false,
           shape: RoundedRectangleBorder(
@@ -161,11 +163,11 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                       ),
                       child: Column(
                         children: <Widget>[
+                          //image with height
                           Expanded(
                               flex: 2,
                               child: Container(
-                                padding: EdgeInsets.all(20),
-                                color: Colors.red,
+                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                                 child: Row(
                                   children: <Widget>[
                                     Column(
@@ -173,17 +175,21 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
-                                        SkeletonTemplate.text(40, 200, 15, AppColors.alternativeColor),
+                                        SkeletonTemplate.text(
+                                            40, 200, 15, AppColors.alternativeColor),
                                         SizedBox(height: 10),
-                                        SkeletonTemplate.text(30, 200, 15, AppColors.alternativeColor),
+                                        SkeletonTemplate.text(
+                                            30, 200, 15, AppColors.alternativeColor),
                                         SizedBox(height: 10),
-                                        SkeletonTemplate.text(30, 50, 15, AppColors.alternativeColor),
+                                        SkeletonTemplate.text(
+                                            50, 50, 15, AppColors.alternativeColor),
                                       ],
                                     ),
                                     Spacer(),
                                     Column(
                                       children: <Widget>[
-                                        SkeletonTemplate.image(150, 150, 15, Colors.grey)
+                                        SkeletonTemplate.image(
+                                            150, 150, 15, AppColors.alternativeColor)
                                       ],
                                     ),
                                   ],
@@ -192,13 +198,16 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                           Expanded(
                             flex: 6,
                             child: Container(
+                              margin: EdgeInsets.only(bottom: 10),
                               child: Column(
                                 children: <Widget>[
+                                  // partof speech
                                   Container(
                                       width: MediaQuery.of(context).size.width,
                                       height: 150,
                                       child: ListView.separated(
-                                        controller: controller,
+                                          padding: EdgeInsets.symmetric(horizontal: 10),
+                                          controller: controller,
                                           scrollDirection: Axis.horizontal,
                                           itemBuilder: (context, index) => Container(
                                                 alignment: Alignment.center,
@@ -210,14 +219,81 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
-                                                    SkeletonTemplate.text(20, 100, 15, AppColors.secondaryColor),
-                                                    SizedBox(height:10),
-                                                    SkeletonTemplate.text(20, 100, 15, AppColors.secondaryColor)
+                                                    SkeletonTemplate.text(
+                                                        20, 80, 15, AppColors.secondaryColor),
+                                                    SizedBox(height: 10),
+                                                    SkeletonTemplate.text(
+                                                        20, 100, 15, AppColors.secondaryColor)
                                                   ],
                                                 ),
                                               ),
                                           separatorBuilder: (context, index) => SizedBox(width: 50),
-                                          itemCount: 3))
+                                          itemCount: 3)),
+                                  // synonym and example
+                                  Expanded(
+                                      child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                                    child: Container(
+                                      width: screenSize.width,
+                                      padding: EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: AppColors.alternativeColor),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          // example
+                                          Expanded(
+                                            flex: 3,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                SkeletonTemplate.text(
+                                                    40, 200, 15, AppColors.secondaryColor),
+                                                SizedBox(height: 20),
+                                                SkeletonTemplate.text(30, screenSize.width, 15,
+                                                    AppColors.secondaryColor),
+                                              ],
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          // synonym
+                                          Expanded(
+                                              flex: 5,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  SkeletonTemplate.text(
+                                                      40, 200, 15, AppColors.secondaryColor),
+                                                  SizedBox(height: 20),
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Wrap(
+                                                      direction: Axis.horizontal,
+                                                      spacing: 20,
+                                                      runSpacing: 20,
+                                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                                      children: <Widget>[
+                                                        for (var item in [
+                                                          "item1",
+                                                          "item2",
+                                                          "item3"
+                                                        ])
+                                                          SkeletonTemplate.image(
+                                                              50, 100, 15, AppColors.secondaryColor)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ))
+                                        ],
+                                      ),
+                                    ),
+                                  ))
                                 ],
                               ),
                             ),
@@ -227,6 +303,8 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                     );
                   }
                   if (result.hasException) {
+                    print(result.exception);
+                    return Container();
                   } else {
                     var word = Word.fromJson(result.data['getWord']);
                     return Container(
@@ -234,41 +312,16 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                        color: AppColors.secondaryColor,
                       ),
                       child: Column(
                         children: <Widget>[
                           Expanded(
                               flex: 2,
                               child: Container(
-                                padding: EdgeInsets.all(20),
+                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                                 child: Row(
                                   children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          word.word,
-                                          style: TextStyle(fontSize: 40, color: Colors.white),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(word.phonetic,
-                                            style: TextStyle(fontSize: 20, color: Colors.white)),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          height: 40,
-                                          width: 100,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              color: AppColors.primaryColor),
-                                          child: Text(wordType(word.wordType),
-                                              style: TextStyle(fontSize: 20, color: Colors.white)),
-                                        )
-                                      ],
-                                    ),
+                                    buildWordAndImage(word),
                                     Spacer(),
                                     Column(
                                       children: <Widget>[
@@ -283,7 +336,8 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                             child: Container(
                               child: Column(
                                 children: <Widget>[
-                                  buildPartOfSpeech(context,controller)
+                                  buildPartOfSpeech(context, controller, word),
+                                  buildExampleAndSynonym(screenSize.width, word)
                                 ],
                               ),
                             ),
@@ -365,32 +419,187 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
     ),
   );
 }
-Widget buildPartOfSpeech(BuildContext context,ScrollController controller){
-  return Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 150,
-                                      child: ListView.separated(
-                                        controller: controller,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, index) => Container(
-                                                alignment: Alignment.center,
-                                                height: 150,
-                                                width: 150,
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color: AppColors.alternativeColor),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    SkeletonTemplate.text(20, 100, 15, AppColors.secondaryColor),
-                                                    SizedBox(height:10),
-                                                    SkeletonTemplate.text(20, 100, 15, AppColors.secondaryColor)
-                                                  ],
-                                                ),
-                                              ),
-                                          separatorBuilder: (context, index) => SizedBox(width: 50),
-                                          itemCount: 3));
+
+Widget buildWordAndImage(Word word) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Text(
+        word.word,
+        style: TextStyle(fontSize: 40, color: Colors.white),
+      ),
+      SizedBox(height: 10),
+      Text(word.phonetic, style: TextStyle(fontSize: 20, color: Colors.white)),
+      SizedBox(height: 10),
+      Container(
+        height: 40,
+        width: 100,
+        alignment: Alignment.center,
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.circular(10), color: AppColors.primaryColor),
+        child: Text(wordType(word.wordType), style: TextStyle(fontSize: 20, color: Colors.white)),
+      )
+    ],
+  );
 }
+
+Widget buildExampleAndSynonym(double width, Word word) {
+  return Expanded(
+      child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+    child: Container(
+      width: width,
+      padding: EdgeInsets.all(20),
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(15), color: AppColors.alternativeColor),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 3,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Example:",
+                  style: TextStyle(
+                      fontSize: 30, fontWeight: FontWeight.bold, color: AppColors.secondaryColor),
+                ),
+                SizedBox(height: 10),
+                // item with dot
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      width: 7,
+                      height: 7,
+                      decoration:
+                          BoxDecoration(color: AppColors.primaryColor, shape: BoxShape.circle),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      width: width - 80,
+                      child: Text(
+                        word.example[0],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 25),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          Spacer(),
+          Expanded(
+              flex: 5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Synonym:",
+                    style: TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold, color: AppColors.secondaryColor),
+                  ),
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      runAlignment: WrapAlignment.start,
+                      spacing: 20,
+                      runSpacing: 20,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: <Widget>[
+                        for (var item in word.synonym)
+                          Container(
+                            alignment: Alignment.center,
+                            width: 200,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: AppColors.secondaryColor),
+                            child: Text(item,
+                                style: TextStyle(
+                                    fontSize: 25,
+                                    color: AppColors.primaryColor,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.bold)),
+                          )
+                      ],
+                    ),
+                  ),
+                ],
+              ))
+        ],
+      ),
+    ),
+  ));
+}
+
+Widget buildPartOfSpeech(BuildContext context, ScrollController controller, Word word) {
+  return word.partOfSpeech[0].word == null
+      ? Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: 150,
+            decoration: BoxDecoration(
+                color: AppColors.alternativeColor, borderRadius: BorderRadius.circular(15)),
+            child: Text("No word match !",
+                style: TextStyle(
+                    fontSize: 25, fontWeight: FontWeight.bold, color: AppColors.secondaryColor)),
+          ),
+        )
+      : Container(
+          width: MediaQuery.of(context).size.width,
+          height: 150,
+          child: ListView.separated(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              controller: controller,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => Container(
+                    alignment: Alignment.center,
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15), color: AppColors.alternativeColor),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(word.partOfSpeech[index].word,
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.secondaryColor)),
+                        SizedBox(height: 10),
+                        Text(
+                          "${word.partOfSpeech[index].type}.",
+                          style: TextStyle(fontSize: 20, color: AppColors.primaryColor),
+                        ),
+                      ],
+                    ),
+                  ),
+              separatorBuilder: (context, index) => SizedBox(width: 50),
+              itemCount: word.partOfSpeech.length));
+}
+
 Widget buildExampleImage(double height, double width, String url) {
   return CachedNetworkImage(
     fit: BoxFit.cover,
@@ -398,7 +607,8 @@ Widget buildExampleImage(double height, double width, String url) {
       height: height,
       width: width,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), image: DecorationImage(image: imageProvider)),
+          borderRadius: BorderRadius.circular(15),
+          image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
     ),
     placeholder: (context, url) => Container(
       height: height,

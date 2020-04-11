@@ -1,5 +1,22 @@
 import 'package:equatable/equatable.dart';
 
+class PartOfSpeech {
+  String word;
+  String type;
+  String phonetic;
+  String example;
+  PartOfSpeech({this.example,this.phonetic,this.type,this.word});
+
+  Map<String, dynamic> toJson(){
+    return {
+      "word":word,
+      "type":type,
+      "phonetic":phonetic,
+      "example":example
+    };
+  }
+}
+
 class Word extends Equatable {
   final String id;
   final String word;
@@ -10,7 +27,7 @@ class Word extends Equatable {
   final String audio;
   final String imageExample;
   final List synonym;
-  final List partOfSpeech;
+  final List<PartOfSpeech> partOfSpeech;
   Word(
       {this.id,
       this.audio,
@@ -39,16 +56,26 @@ class Word extends Equatable {
   @override
   List<Object> get props => [word, meaning, example];
   factory Word.fromJson(Map item) {
+    var partOfSpeech = <PartOfSpeech>[];
+    item['partOfSpeech'].forEach((item){
+      partOfSpeech.add(PartOfSpeech(
+        example: item['example'],
+        phonetic: item['phonetic'],
+        type: item['type'],
+        word: item['word']
+      ));
+    });
     try {
       return Word(
-        word: item['word'],
-        meaning: item['meaning'] as List,
-        imageExample: item['image_example'] ,
-        phonetic: item['phonetic'],
-        audio: item['audio'] ,
-        example: item['example'] ,
-        wordType: item['word_type'] ,
-        synonym: item['synonym']);
+          partOfSpeech: partOfSpeech,
+          word: item['word'],
+          meaning: item['meaning'] as List,
+          imageExample: item['image_example'],
+          phonetic: item['phonetic'],
+          audio: item['audio'],
+          example: item['example'],
+          wordType: item['word_type'],
+          synonym: item['synonym']);
     } catch (e) {
       return Word();
     }
@@ -71,12 +98,12 @@ class Words {
             id: item['_id'],
             word: item['word'],
             meaning: item['meaning'] as List,
-            imageExample: item['image_example'] == null ? "" : item['image_example'],
+            /*imageExample: item['image_example'] == null ? "" : item['image_example'],
             phonetic: item['phonetic'] == null ? "" : item['phonetic'],
             audio: item['audio'] == null ? "" : item['audio'],
             example: item['example'] == null ? [] : item['example'],
             wordType: item['word_type'] == null ? "" : item['word_type'],
-            synonym: item['synonym'] == null ? [] : item['synonym']));
+            synonym: item['synonym'] == null ? [] : item['synonym']*/));
       }
       return Words(words: words, next: nextPage, previous: previousPage);
     } catch (e) {

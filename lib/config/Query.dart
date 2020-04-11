@@ -24,6 +24,12 @@ class GraphQLQuery{
           audio
           synonym
           image_example
+          partOfSpeech{
+              word
+              example
+              type
+              phonetic
+            }
         }
     }
 

@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
         height: screenSize.height,
         width: screenSize.width,
         decoration:
-            BoxDecoration(image: DecorationImage(image: AssetImage("assets/pngs/splashscreen.png"))),
+            BoxDecoration(image: DecorationImage(image: AssetImage("assets/pngs/splashscreen.png"),fit: BoxFit.cover)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
