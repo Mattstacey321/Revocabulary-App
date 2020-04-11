@@ -283,7 +283,7 @@ Widget buildWordItem(BuildContext context, String id, String word, String meanin
                             child: Container(
                               child: Column(
                                 children: <Widget>[
-                                  buildPartOfSpeech()
+                                  buildPartOfSpeech(context,controller)
                                 ],
                               ),
                             ),
