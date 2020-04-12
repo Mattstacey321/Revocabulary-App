@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class PartOfSpeech {
@@ -5,15 +7,10 @@ class PartOfSpeech {
   String type;
   String phonetic;
   String example;
-  PartOfSpeech({this.example,this.phonetic,this.type,this.word});
+  PartOfSpeech({this.example, this.phonetic, this.type, this.word});
 
-  Map<String, dynamic> toJson(){
-    return {
-      "word":word,
-      "type":type,
-      "phonetic":phonetic,
-      "example":example
-    };
+  Map<String, dynamic> toJson() {
+    return {"word": word, "type": type, "phonetic": phonetic, "example": example};
   }
 }
 
@@ -49,7 +46,7 @@ class Word extends Equatable {
       "wordType": wordType,
       "imageExample": imageExample,
       "synonym": synonym,
-      "partOfSpeech": partOfSpeech
+      "partOfSpeech": json.encode(partOfSpeech)
     };
   }
 
@@ -57,19 +54,19 @@ class Word extends Equatable {
   List<Object> get props => [word, meaning, example];
   factory Word.fromJson(Map item) {
     var partOfSpeech = <PartOfSpeech>[];
-    item['partOfSpeech'].forEach((item){
-      partOfSpeech.add(PartOfSpeech(
-        example: item['example'],
-        phonetic: item['phonetic'],
-        type: item['type'],
-        word: item['word']
-      ));
-    });
+    item['partOfSpeech'] != null ?? item['partOfSpeech'].forEach((item) {
+        partOfSpeech.add(PartOfSpeech(
+            example: item['example'],
+            phonetic: item['phonetic'],
+            type: item['type'],
+            word: item['word']));
+      }) ;
     try {
+      
       return Word(
           partOfSpeech: partOfSpeech,
           word: item['word'],
-          meaning: item['meaning'] as List,
+          meaning: item['meaning'],
           imageExample: item['image_example'],
           phonetic: item['phonetic'],
           audio: item['audio'],
@@ -77,6 +74,7 @@ class Word extends Equatable {
           wordType: item['word_type'],
           synonym: item['synonym']);
     } catch (e) {
+      print(e);
       return Word();
     }
   }
@@ -95,15 +93,16 @@ class Words {
       var words = <Word>[];
       for (var item in getWord['docs']) {
         words.add(Word(
-            id: item['_id'],
-            word: item['word'],
-            meaning: item['meaning'] as List,
-            /*imageExample: item['image_example'] == null ? "" : item['image_example'],
+          id: item['_id'],
+          word: item['word'],
+          meaning: item['meaning'] as List,
+          /*imageExample: item['image_example'] == null ? "" : item['image_example'],
             phonetic: item['phonetic'] == null ? "" : item['phonetic'],
             audio: item['audio'] == null ? "" : item['audio'],
             example: item['example'] == null ? [] : item['example'],
             wordType: item['word_type'] == null ? "" : item['word_type'],
-            synonym: item['synonym'] == null ? [] : item['synonym']*/));
+            synonym: item['synonym'] == null ? [] : item['synonym']*/
+        ));
       }
       return Words(words: words, next: nextPage, previous: previousPage);
     } catch (e) {

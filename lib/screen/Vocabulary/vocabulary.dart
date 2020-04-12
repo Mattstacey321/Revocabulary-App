@@ -7,6 +7,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:revocabulary/class/Word.dart';
 import 'package:revocabulary/config/Query.dart';
 import 'package:revocabulary/config/config.dart';
+import 'package:revocabulary/screen/Saved/SavedWordProvider.dart';
 import 'package:revocabulary/screen/Vocabulary/wordProvider.dart';
 import 'package:revocabulary/util/skeleton_template.dart';
 import 'package:revocabulary/util/word_type.dart';
@@ -22,27 +23,30 @@ class Vocabulary extends StatefulWidget {
 
 class _VocabularyState extends State<Vocabulary> {
   ScrollController _scrollController;
-
-  String nextPage = "";
   WordProvider wordProvider;
+  SavedWordProvider savedWordProvider;
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController()
       ..addListener(() {
-        final maxScroll = _scrollController.position.maxScrollExtent;
-        final currentScroll = _scrollController.position.pixels;
-        if (currentScroll == maxScroll) {
-          print(wordProvider.reachedEnd);
-          if (wordProvider.reachedEnd) {
-            return;
-          } else
-            wordProvider.loadMore();
-        }
+        loadMore();
       });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       wordProvider.initLoad();
     });
+  }
+
+  void loadMore() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (currentScroll == maxScroll) {
+      print(wordProvider.reachedEnd);
+      if (wordProvider.reachedEnd) {
+        return;
+      } else
+        wordProvider.loadMore();
+    }
   }
 
   @override
@@ -55,6 +59,7 @@ class _VocabularyState extends State<Vocabulary> {
   @override
   Widget build(BuildContext context) {
     wordProvider = Injector.get(context: context);
+    savedWordProvider = Injector.get(context: context);
     return Scaffold(
       body: Container(
         child: Column(
@@ -107,7 +112,8 @@ class _VocabularyState extends State<Vocabulary> {
                                       wordProvider.listWords[index].id,
                                       wordProvider.listWords[index],
                                       wordProvider.listWords[index].meaning[0],
-                                      "");
+                                      "",
+                                      savedWordProvider);
                             },
                             // add more 1 to make space for loading icon
                             itemCount: wordProvider.next == ""
@@ -137,7 +143,8 @@ Widget buildLoadMore() {
       ));
 }
 
-Widget buildWordItem(BuildContext context, String id, Word word, String meaning, String audio) {
+Widget buildWordItem(BuildContext context, String id, Word word, String meaning, String audio,
+    SavedWordProvider savedWordProvider) {
   GraphQLQuery query = GraphQLQuery();
   var screenSize = MediaQuery.of(context).size;
   bool save = false;
@@ -348,7 +355,15 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
       child: Container(
         padding: EdgeInsets.all(10),
         height: 80,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 1,
+                offset: Offset(1, 2),
+                color: AppColors.secondaryColor.withOpacity(0.2))
+          ],
+        ),
         child: Row(
           children: <Widget>[
             Column(
@@ -401,8 +416,10 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
                   iconSize: 35,
                   wordID: word.id,
                   saved: false,
+                  onSaved: (value) async {
+                    !value ? savedWordProvider.addToSaved(word) : null;
+                  },
                 )
- 
               ],
             )
           ],

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:revocabulary/screen/Saved/SavedWordProvider.dart';
 import 'package:revocabulary/values/AppColors.dart';
 
 class SaveButton extends StatefulWidget {
@@ -10,10 +11,13 @@ class SaveButton extends StatefulWidget {
   final Color darkColor;
   final String wordID;
   final double iconSize;
+  final Function onSaved;
+
   const SaveButton(
       {@required this.iconSize,
       @required this.wordID,
       this.icon,
+      this.onSaved,
       @required this.saved,
       @required this.lightColor,
       @required this.darkColor});
@@ -22,11 +26,13 @@ class SaveButton extends StatefulWidget {
   _SaveButtonState createState() => _SaveButtonState();
 }
 
-class _SaveButtonState extends State<SaveButton> with TickerProviderStateMixin,AutomaticKeepAliveClientMixin {
+class _SaveButtonState extends State<SaveButton>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool isSave = false;
   int state = 0; // unsave
   AnimationController animationController;
   Animation animation;
+  SavedWordProvider savedWordProvider;
   @override
   void initState() {
     super.initState();
@@ -67,13 +73,14 @@ class _SaveButtonState extends State<SaveButton> with TickerProviderStateMixin,A
 
   Widget buildWidget() {
     if (state == 1 && isSave) {
-      print("saved");
-       //TODO save word here
-        return Icon(
-          Icons.bookmark,
-          color: widget.darkColor,
-          size: 30,
-        );
+      //print("saved");
+      //TODO save word here
+      
+      return Icon(
+        Icons.bookmark,
+        color: widget.darkColor,
+        size: 30,
+      );
     }
     if (state == 2) {
       return SizedBox(
@@ -85,8 +92,9 @@ class _SaveButtonState extends State<SaveButton> with TickerProviderStateMixin,A
         ),
       );
     } else {
-      print("unsave else");
+      //print("unsave else");
       //TODO unsave word here
+      
       return Icon(
         Icons.bookmark_border,
         color: widget.lightColor,
@@ -94,11 +102,20 @@ class _SaveButtonState extends State<SaveButton> with TickerProviderStateMixin,A
       );
     }
   }
-
+  void addWord(){
+    if(isSave){
+      widget.onSaved(true);
+      print("unsave");
+    }
+    else{
+      widget.onSaved(false);
+      print("save");
+    }
+  }
   @override
   void dispose() {
     super.dispose();
-    animationController.dispose();
+    //animationController.dispose();
   }
 
   @override
@@ -118,10 +135,12 @@ class _SaveButtonState extends State<SaveButton> with TickerProviderStateMixin,A
             shape: CircleBorder(),
             animationDuration: Duration(milliseconds: 1000),
             onPressed: () {
-              print("state $state , $isSave");
+              //print("state $state , $isSave");
+              
               setState(() {
                 animationButton();
               });
+              addWord();
             },
             child: buildWidget(),
           )),
