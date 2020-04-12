@@ -27,36 +27,44 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       body: Container(
         height: screenSize.height,
         width: screenSize.width,
-        decoration:
-            BoxDecoration(image: DecorationImage(image: AssetImage("assets/pngs/splashscreen.png"),fit: BoxFit.cover)),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/pngs/splashscreen.png"), fit: BoxFit.cover)),
+        child: Stack(
           children: <Widget>[
-            Spacer(flex: 1,),
-            Logo(animation: animation, slideAnimation: slideAnimation),
-            Spacer(flex: 1,),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                  height: 50,
-                  width: 200,
-                  child: InkWell(
-                        onTap: () async{
-                          SharedPreferences ref=  await SharedPreferences.getInstance();
-                          ref.setBool("isLogin", true);
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => Home(),));
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            alignment: Alignment.center,
-                            color: AppColors.primaryColor,
-                            child: Text("Get Started",style:TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold)),
-                          ),
+            Positioned.fill(
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Logo(animation: animation, slideAnimation: slideAnimation)),
+            ),
+            Positioned.fill(
+              bottom: 50,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                    height: 50,
+                    width: 200,
+                    child: InkWell(
+                      onTap: () async {
+                        SharedPreferences ref = await SharedPreferences.getInstance();
+                        ref.setBool("isLogin", true);
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Home(),
+                        ));
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          alignment: Alignment.center,
+                          color: AppColors.primaryColor,
+                          child: Text("Get Started",
+                              style: TextStyle(
+                                  fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
-                      )),
-            )
+                      ),
+                    )),
+              ),
+            ),
           ],
         ),
       ),

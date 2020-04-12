@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -10,6 +11,8 @@ import 'package:revocabulary/screen/Vocabulary/wordProvider.dart';
 import 'package:revocabulary/util/skeleton_template.dart';
 import 'package:revocabulary/util/word_type.dart';
 import 'package:revocabulary/values/AppColors.dart';
+import 'package:revocabulary/widget/circleIcon.dart';
+import 'package:revocabulary/widget/saveButton.dart';
 import 'package:states_rebuilder/states_rebuilder.dart';
 
 class Vocabulary extends StatefulWidget {
@@ -102,7 +105,7 @@ class _VocabularyState extends State<Vocabulary> {
                                   : buildWordItem(
                                       context,
                                       wordProvider.listWords[index].id,
-                                      wordProvider.listWords[index].word,
+                                      wordProvider.listWords[index],
                                       wordProvider.listWords[index].meaning[0],
                                       "");
                             },
@@ -111,6 +114,7 @@ class _VocabularyState extends State<Vocabulary> {
                                 ? wordProvider.listWords.length
                                 : wordProvider.listWords.length + 1,
                             controller: _scrollController,
+                            addAutomaticKeepAlives: true,
                           ),
                         ),
                       ))
@@ -133,288 +137,276 @@ Widget buildLoadMore() {
       ));
 }
 
-Widget buildWordItem(BuildContext context, String id, String word, String meaning, String audio) {
+Widget buildWordItem(BuildContext context, String id, Word word, String meaning, String audio) {
   GraphQLQuery query = GraphQLQuery();
   var screenSize = MediaQuery.of(context).size;
-  return InkWell(
-    onTap: () {
-      showMaterialModalBottomSheet(
-          enableDrag: false,
-          useRootNavigator: true,
-          expand: false,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-          backgroundColor: AppColors.secondaryColor,
-          context: context,
-          builder: (context, controller) {
-            return GraphQLProvider(
-              client: customClient(),
-              child: CacheProvider(
-                  child: Query(
-                options: QueryOptions(documentNode: gql(query.getWord(id))),
-                builder: (result, {fetchMore, refetch}) {
-                  if (result.loading) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height - 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          //image with height
-                          Expanded(
-                              flex: 2,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                                child: Row(
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        SkeletonTemplate.text(
-                                            40, 200, 15, AppColors.alternativeColor),
-                                        SizedBox(height: 10),
-                                        SkeletonTemplate.text(
-                                            30, 200, 15, AppColors.alternativeColor),
-                                        SizedBox(height: 10),
-                                        SkeletonTemplate.text(
-                                            50, 50, 15, AppColors.alternativeColor),
-                                      ],
-                                    ),
-                                    Spacer(),
-                                    Column(
-                                      children: <Widget>[
-                                        SkeletonTemplate.image(
-                                            150, 150, 15, AppColors.alternativeColor)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )),
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              child: Column(
-                                children: <Widget>[
-                                  // partof speech
-                                  Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 150,
-                                      child: ListView.separated(
-                                          padding: EdgeInsets.symmetric(horizontal: 10),
-                                          controller: controller,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, index) => Container(
-                                                alignment: Alignment.center,
-                                                height: 150,
-                                                width: 150,
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color: AppColors.alternativeColor),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    SkeletonTemplate.text(
-                                                        20, 80, 15, AppColors.secondaryColor),
-                                                    SizedBox(height: 10),
-                                                    SkeletonTemplate.text(
-                                                        20, 100, 15, AppColors.secondaryColor)
-                                                  ],
-                                                ),
-                                              ),
-                                          separatorBuilder: (context, index) => SizedBox(width: 50),
-                                          itemCount: 3)),
-                                  // synonym and example
-                                  Expanded(
-                                      child: Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                                    child: Container(
-                                      width: screenSize.width,
-                                      padding: EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15),
-                                          color: AppColors.alternativeColor),
-                                      child: Column(
+  bool save = false;
+  return Material(
+    color: AppColors.secondaryColor,
+    borderRadius: BorderRadius.circular(15),
+    child: InkWell(
+      onTap: () {
+        showMaterialModalBottomSheet(
+            enableDrag: false,
+            useRootNavigator: true,
+            expand: false,
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+            backgroundColor: AppColors.secondaryColor,
+            context: context,
+            builder: (context, controller) {
+              return GraphQLProvider(
+                client: customClient(),
+                child: CacheProvider(
+                    child: Query(
+                  options: QueryOptions(documentNode: gql(query.getWord(id))),
+                  builder: (result, {fetchMore, refetch}) {
+                    if (result.loading) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height - 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            //image with height
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          // example
-                                          Expanded(
-                                            flex: 3,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                SkeletonTemplate.text(
-                                                    40, 200, 15, AppColors.secondaryColor),
-                                                SizedBox(height: 20),
-                                                SkeletonTemplate.text(30, screenSize.width, 15,
-                                                    AppColors.secondaryColor),
-                                              ],
-                                            ),
-                                          ),
-                                          Spacer(),
-                                          // synonym
-                                          Expanded(
-                                              flex: 5,
+                                          SkeletonTemplate.text(
+                                              40, 200, 15, AppColors.alternativeColor),
+                                          SizedBox(height: 10),
+                                          SkeletonTemplate.text(
+                                              30, 200, 15, AppColors.alternativeColor),
+                                          SizedBox(height: 10),
+                                          SkeletonTemplate.text(
+                                              30, 100, 15, AppColors.alternativeColor),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Column(
+                                        children: <Widget>[
+                                          SkeletonTemplate.image(
+                                              120, 120, 15, AppColors.alternativeColor)
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                            Expanded(
+                              flex: 6,
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  children: <Widget>[
+                                    // partof speech
+                                    Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        height: 150,
+                                        child: ListView.separated(
+                                            padding: EdgeInsets.symmetric(horizontal: 10),
+                                            controller: controller,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) => Container(
+                                                  alignment: Alignment.center,
+                                                  height: 150,
+                                                  width: 150,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(15),
+                                                      color: AppColors.alternativeColor),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      SkeletonTemplate.text(
+                                                          20, 80, 15, AppColors.secondaryColor),
+                                                      SizedBox(height: 10),
+                                                      SkeletonTemplate.text(
+                                                          20, 100, 15, AppColors.secondaryColor)
+                                                    ],
+                                                  ),
+                                                ),
+                                            separatorBuilder: (context, index) =>
+                                                SizedBox(width: 50),
+                                            itemCount: 3)),
+                                    // synonym and example
+                                    Expanded(
+                                        child: Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                                      child: Container(
+                                        width: screenSize.width,
+                                        padding: EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                            color: AppColors.alternativeColor),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            // example
+                                            Expanded(
+                                              flex: 3,
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: <Widget>[
                                                   SkeletonTemplate.text(
-                                                      40, 200, 15, AppColors.secondaryColor),
+                                                      30, 200, 15, AppColors.secondaryColor),
                                                   SizedBox(height: 20),
-                                                  Align(
-                                                    alignment: Alignment.center,
-                                                    child: Wrap(
-                                                      direction: Axis.horizontal,
-                                                      spacing: 20,
-                                                      runSpacing: 20,
-                                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                                      children: <Widget>[
-                                                        for (var item in [
-                                                          "item1",
-                                                          "item2",
-                                                          "item3"
-                                                        ])
-                                                          SkeletonTemplate.image(
-                                                              50, 100, 15, AppColors.secondaryColor)
-                                                      ],
-                                                    ),
-                                                  ),
+                                                  SkeletonTemplate.text(30, screenSize.width, 15,
+                                                      AppColors.secondaryColor),
                                                 ],
-                                              ))
-                                        ],
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            // synonym
+                                            Expanded(
+                                                flex: 5,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    SkeletonTemplate.text(
+                                                        30, 200, 15, AppColors.secondaryColor),
+                                                    SizedBox(height: 20),
+                                                    SkeletonTemplate.text(
+                                                        30, 200, 15, AppColors.secondaryColor),
+                                                  ],
+                                                ))
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ))
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                  if (result.hasException) {
-                    print(result.exception);
-                    return Container();
-                  } else {
-                    var word = Word.fromJson(result.data['getWord']);
-                    return Container(
-                      height: MediaQuery.of(context).size.height - 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(
-                              flex: 2,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                                child: Row(
-                                  children: <Widget>[
-                                    buildWordAndImage(word),
-                                    Spacer(),
-                                    Column(
-                                      children: <Widget>[
-                                        buildExampleImage(150, 150, word.imageExample)
-                                      ],
-                                    ),
+                                    ))
                                   ],
                                 ),
-                              )),
-                          Expanded(
-                            flex: 6,
-                            child: Container(
-                              child: Column(
-                                children: <Widget>[
-                                  buildPartOfSpeech(context, controller, word),
-                                  buildExampleAndSynonym(screenSize.width, word)
-                                ],
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                },
-              )),
-            );
-          });
-    },
-    child: Container(
-      padding: EdgeInsets.all(10),
-      height: 80,
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(15), color: AppColors.secondaryColor),
-      child: Row(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 7,
-                    height: 7,
-                    decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    word,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Container(
-                  width: 200,
-                  child: Text(
-                    meaning,
-                    style:
-                        TextStyle(fontStyle: FontStyle.italic, color: Colors.white, fontSize: 20),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    softWrap: true,
-                  ),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                    if (result.hasException) {
+                      print(result.exception);
+                      return Container();
+                    } else {
+                      var word = Word.fromJson(result.data['getWord']);
+                      return Container(
+                        height: MediaQuery.of(context).size.height - 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                  child: Row(
+                                    children: <Widget>[
+                                      buildWordAndImage(word),
+                                      Spacer(),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          buildExampleImage(120, 120, word.imageExample)
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                            Expanded(
+                              flex: 6,
+                              child: Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    buildPartOfSpeech(context, controller, word),
+                                    buildExampleAndSynonym(screenSize.width, word)
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                )),
+              );
+            });
+      },
+      child: Container(
+        padding: EdgeInsets.all(10),
+        height: 80,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+        child: Row(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      word.word,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-          Spacer(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  alignment: Alignment.center,
-                  decoration:
-                      BoxDecoration(color: AppColors.alternativeColor, shape: BoxShape.circle),
-                  child: IconButton(
-                    icon: Icon(FeatherIcons.play, color: AppColors.secondaryColor),
-                    alignment: Alignment.center,
-                    onPressed: () {},
-                  ))
-            ],
-          )
-        ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Container(
+                    width: 200,
+                    child: Text(
+                      meaning,
+                      style:
+                          TextStyle(fontStyle: FontStyle.italic, color: Colors.white, fontSize: 20),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: true,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Spacer(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SaveButton(
+                  darkColor: AppColors.primaryColor,
+                  lightColor: AppColors.alternativeColor,
+                  iconSize: 35,
+                  wordID: word.id,
+                  saved: false,
+                )
+ 
+              ],
+            )
+          ],
+        ),
       ),
     ),
   );
@@ -430,8 +422,21 @@ Widget buildWordAndImage(Word word) {
         word.word,
         style: TextStyle(fontSize: 40, color: Colors.white),
       ),
-      SizedBox(height: 10),
-      Text(word.phonetic, style: TextStyle(fontSize: 20, color: Colors.white)),
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(word.phonetic,
+              style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: "Roboto")),
+          CircleIcon(
+            icon: FeatherIcons.volume2,
+            iconSize: 20,
+            onTap: () async {
+              AudioPlayer player = AudioPlayer();
+              await player.play(word.audio);
+            },
+          )
+        ],
+      ),
       SizedBox(height: 10),
       Container(
         height: 40,
@@ -587,7 +592,7 @@ Widget buildPartOfSpeech(BuildContext context, ScrollController controller, Word
                             style: TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.secondaryColor)),
+                                color: AppColors.primaryColor)),
                         SizedBox(height: 10),
                         Text(
                           "${word.partOfSpeech[index].type}.",
