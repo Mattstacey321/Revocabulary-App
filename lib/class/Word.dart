@@ -1,12 +1,18 @@
 import 'dart:convert';
+import 'package:hive/hive.dart';
+part 'Word.g.dart';
 
-import 'package:equatable/equatable.dart';
-
-class PartOfSpeech {
+@HiveType(typeId: 0)
+class PartOfSpeech extends HiveObject {
+  @HiveField(0)
   String word;
+  @HiveField(1)
   String type;
+  @HiveField(2)
   String phonetic;
+  @HiveField(3)
   String example;
+  @HiveField(4)
   PartOfSpeech({this.example, this.phonetic, this.type, this.word});
 
   Map<String, dynamic> toJson() {
@@ -14,17 +20,30 @@ class PartOfSpeech {
   }
 }
 
-class Word extends Equatable {
-  final String id;
-  final String word;
-  final List meaning;
-  final List example;
-  final String phonetic;
-  final String wordType;
-  final String audio;
-  final String imageExample;
-  final List synonym;
-  final List<PartOfSpeech> partOfSpeech;
+@HiveType(typeId: 1)
+class Word extends HiveObject {
+  @HiveField(0)
+  String id;
+  @HiveField(1)
+  String word;
+  @HiveField(2)
+  List meaning;
+  @HiveField(3)
+  List example;
+  @HiveField(4)
+  String phonetic;
+  @HiveField(5)
+  String wordType;
+  @HiveField(6)
+  String audio;
+  @HiveField(7)
+  String imageExample;
+  @HiveField(8)
+  List synonym;
+  @HiveField(9)
+  List<PartOfSpeech> partOfSpeech;
+  @HiveField(10)
+  List<Word> words;
   Word(
       {this.id,
       this.audio,
@@ -50,19 +69,19 @@ class Word extends Equatable {
     };
   }
 
-  @override
-  List<Object> get props => [word, meaning, example];
+  /*@override
+  List<Object> get props => [word, meaning, example];*/
   factory Word.fromJson(Map item) {
     var partOfSpeech = <PartOfSpeech>[];
-    item['partOfSpeech'] != null ?? item['partOfSpeech'].forEach((item) {
-        partOfSpeech.add(PartOfSpeech(
-            example: item['example'],
-            phonetic: item['phonetic'],
-            type: item['type'],
-            word: item['word']));
-      }) ;
+    item['partOfSpeech'] != null ??
+        item['partOfSpeech'].forEach((item) {
+          partOfSpeech.add(PartOfSpeech(
+              example: item['example'],
+              phonetic: item['phonetic'],
+              type: item['type'],
+              word: item['word']));
+        });
     try {
-      
       return Word(
           partOfSpeech: partOfSpeech,
           word: item['word'],
@@ -80,10 +99,15 @@ class Word extends Equatable {
   }
 }
 
-class Words {
+@HiveType(typeId: 2)
+class Words extends HiveObject {
+  @HiveField(0)
   List<Word> words;
+  @HiveField(1)
   String next;
+  @HiveField(2)
   String previous;
+
   Words({this.words, this.next, this.previous});
   factory Words.fromJson(Map json) {
     try {

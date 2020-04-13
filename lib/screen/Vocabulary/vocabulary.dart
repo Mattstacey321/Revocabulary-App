@@ -13,6 +13,7 @@ import 'package:revocabulary/util/skeleton_template.dart';
 import 'package:revocabulary/util/word_type.dart';
 import 'package:revocabulary/values/AppColors.dart';
 import 'package:revocabulary/widget/circleIcon.dart';
+import 'package:revocabulary/widget/faslideAnimation.dart';
 import 'package:revocabulary/widget/saveButton.dart';
 import 'package:states_rebuilder/states_rebuilder.dart';
 
@@ -148,137 +149,123 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
   GraphQLQuery query = GraphQLQuery();
   var screenSize = MediaQuery.of(context).size;
   bool save = false;
-  return Material(
-    color: AppColors.secondaryColor,
-    borderRadius: BorderRadius.circular(15),
-    child: InkWell(
-      onTap: () {
-        showMaterialModalBottomSheet(
-            enableDrag: false,
-            useRootNavigator: true,
-            expand: false,
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-            backgroundColor: AppColors.secondaryColor,
-            context: context,
-            builder: (context, controller) {
-              return GraphQLProvider(
-                client: customClient(),
-                child: CacheProvider(
-                    child: Query(
-                  options: QueryOptions(documentNode: gql(query.getWord(id))),
-                  builder: (result, {fetchMore, refetch}) {
-                    if (result.loading) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height - 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            //image with height
-                            Expanded(
-                                flex: 2,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          SkeletonTemplate.text(
-                                              40, 200, 15, AppColors.alternativeColor),
-                                          SizedBox(height: 10),
-                                          SkeletonTemplate.text(
-                                              30, 200, 15, AppColors.alternativeColor),
-                                          SizedBox(height: 10),
-                                          SkeletonTemplate.text(
-                                              30, 100, 15, AppColors.alternativeColor),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      Column(
-                                        children: <Widget>[
-                                          SkeletonTemplate.image(
-                                              120, 120, 15, AppColors.alternativeColor)
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                            Expanded(
-                              flex: 6,
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 10),
-                                child: Column(
-                                  children: <Widget>[
-                                    // partof speech
-                                    Container(
-                                        width: MediaQuery.of(context).size.width,
-                                        height: 150,
-                                        child: ListView.separated(
-                                            padding: EdgeInsets.symmetric(horizontal: 10),
-                                            controller: controller,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) => Container(
-                                                  alignment: Alignment.center,
-                                                  height: 150,
-                                                  width: 150,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(15),
-                                                      color: AppColors.alternativeColor),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: <Widget>[
-                                                      SkeletonTemplate.text(
-                                                          20, 80, 15, AppColors.secondaryColor),
-                                                      SizedBox(height: 10),
-                                                      SkeletonTemplate.text(
-                                                          20, 100, 15, AppColors.secondaryColor)
-                                                    ],
-                                                  ),
-                                                ),
-                                            separatorBuilder: (context, index) =>
-                                                SizedBox(width: 50),
-                                            itemCount: 3)),
-                                    // synonym and example
-                                    Expanded(
-                                        child: Padding(
-                                      padding:
-                                          const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                                      child: Container(
-                                        width: screenSize.width,
-                                        padding: EdgeInsets.all(20),
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(15),
-                                            color: AppColors.alternativeColor),
-                                        child: Column(
+  return FaSlideAnimation(
+    delayed: 200,
+    child: Material(
+      color: AppColors.secondaryColor,
+      borderRadius: BorderRadius.circular(15),
+      child: InkWell(
+        onTap: () {
+          showMaterialModalBottomSheet(
+              enableDrag: false,
+              useRootNavigator: true,
+              expand: false,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+              backgroundColor: AppColors.secondaryColor,
+              context: context,
+              builder: (context, controller) {
+                return GraphQLProvider(
+                  client: customClient(),
+                  child: CacheProvider(
+                      child: Query(
+                    options: QueryOptions(documentNode: gql(query.getWord(id))),
+                    builder: (result, {fetchMore, refetch}) {
+                      if (result.loading) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height - 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              //image with height
+                              Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Column(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
-                                            // example
-                                            Expanded(
-                                              flex: 3,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  SkeletonTemplate.text(
-                                                      30, 200, 15, AppColors.secondaryColor),
-                                                  SizedBox(height: 20),
-                                                  SkeletonTemplate.text(30, screenSize.width, 15,
-                                                      AppColors.secondaryColor),
-                                                ],
-                                              ),
-                                            ),
-                                            Spacer(),
-                                            // synonym
-                                            Expanded(
-                                                flex: 5,
+                                            SkeletonTemplate.text(
+                                                40, 200, 15, AppColors.alternativeColor),
+                                            SizedBox(height: 10),
+                                            SkeletonTemplate.text(
+                                                30, 200, 15, AppColors.alternativeColor),
+                                            SizedBox(height: 10),
+                                            SkeletonTemplate.text(
+                                                30, 100, 15, AppColors.alternativeColor),
+                                          ],
+                                        ),
+                                        Spacer(),
+                                        Column(
+                                          children: <Widget>[
+                                            SkeletonTemplate.image(
+                                                120, 120, 15, AppColors.alternativeColor)
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                              Expanded(
+                                flex: 6,
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: Column(
+                                    children: <Widget>[
+                                      // partof speech
+                                      Container(
+                                          width: MediaQuery.of(context).size.width,
+                                          height: 150,
+                                          child: ListView.separated(
+                                              padding: EdgeInsets.symmetric(horizontal: 10),
+                                              controller: controller,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (context, index) => Container(
+                                                    alignment: Alignment.center,
+                                                    height: 150,
+                                                    width: 150,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(15),
+                                                        color: AppColors.alternativeColor),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        SkeletonTemplate.text(
+                                                            20, 80, 15, AppColors.secondaryColor),
+                                                        SizedBox(height: 10),
+                                                        SkeletonTemplate.text(
+                                                            20, 100, 15, AppColors.secondaryColor)
+                                                      ],
+                                                    ),
+                                                  ),
+                                              separatorBuilder: (context, index) =>
+                                                  SizedBox(width: 50),
+                                              itemCount: 3)),
+                                      // synonym and example
+                                      Expanded(
+                                          child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 20),
+                                        child: Container(
+                                          width: screenSize.width,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(15),
+                                              color: AppColors.alternativeColor),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              // example
+                                              Expanded(
+                                                flex: 3,
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,143 +273,160 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
                                                     SkeletonTemplate.text(
                                                         30, 200, 15, AppColors.secondaryColor),
                                                     SizedBox(height: 20),
-                                                    SkeletonTemplate.text(
-                                                        30, 200, 15, AppColors.secondaryColor),
+                                                    SkeletonTemplate.text(30, screenSize.width, 15,
+                                                        AppColors.secondaryColor),
                                                   ],
-                                                ))
-                                          ],
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              // synonym
+                                              Expanded(
+                                                  flex: 5,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      SkeletonTemplate.text(
+                                                          30, 200, 15, AppColors.secondaryColor),
+                                                      SizedBox(height: 20),
+                                                      SkeletonTemplate.text(
+                                                          30, 200, 15, AppColors.secondaryColor),
+                                                    ],
+                                                  ))
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ))
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    }
-                    if (result.hasException) {
-                      print(result.exception);
-                      return Container();
-                    } else {
-                      var word = Word.fromJson(result.data['getWord']);
-                      return Container(
-                        height: MediaQuery.of(context).size.height - 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                                flex: 2,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                                  child: Row(
-                                    children: <Widget>[
-                                      buildWordAndImage(word),
-                                      Spacer(),
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          buildExampleImage(120, 120, word.imageExample)
-                                        ],
-                                      ),
+                                      ))
                                     ],
                                   ),
-                                )),
-                            Expanded(
-                              flex: 6,
-                              child: Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    buildPartOfSpeech(context, controller, word),
-                                    buildExampleAndSynonym(screenSize.width, word)
-                                  ],
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                )),
-              );
-            });
-      },
-      child: Container(
-        padding: EdgeInsets.all(10),
-        height: 80,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-                blurRadius: 1,
-                offset: Offset(1, 2),
-                color: AppColors.secondaryColor.withOpacity(0.2))
-          ],
-        ),
-        child: Row(
-          children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 7,
-                      height: 7,
-                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      word.word,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Container(
-                    width: 200,
-                    child: Text(
-                      meaning,
-                      style:
-                          TextStyle(fontStyle: FontStyle.italic, color: Colors.white, fontSize: 20),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      softWrap: true,
-                    ),
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                      if (result.hasException) {
+                        print(result.exception);
+                        return Container();
+                      } else {
+                        var word = Word.fromJson(result.data['getWord']);
+                        return Container(
+                          height: MediaQuery.of(context).size.height - 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                    child: Row(
+                                      children: <Widget>[
+                                        buildWordAndImage(word),
+                                        Spacer(),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            buildExampleImage(120, 120, word.imageExample)
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                              Expanded(
+                                flex: 6,
+                                child: Container(
+                                  child: Column(
+                                    children: <Widget>[
+                                      buildPartOfSpeech(context, controller, word),
+                                      buildExampleAndSynonym(screenSize.width, word)
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  )),
+                );
+              });
+        },
+        child: Container(
+          padding: EdgeInsets.all(10),
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                  blurRadius: 1,
+                  offset: Offset(1, 2),
+                  color: AppColors.secondaryColor.withOpacity(0.2))
+            ],
+          ),
+          child: Row(
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        word.word,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white, fontSize: 25),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-            Spacer(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SaveButton(
-                  darkColor: AppColors.primaryColor,
-                  lightColor: AppColors.alternativeColor,
-                  iconSize: 35,
-                  wordID: word.id,
-                  saved: false,
-                  onSaved: (value) async {
-                    !value ? savedWordProvider.addToSaved(word) : null;
-                  },
-                )
-              ],
-            )
-          ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Container(
+                      width: 200,
+                      child: Text(
+                        meaning,
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.white, fontSize: 20),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        softWrap: true,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Spacer(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SaveButton(
+                    darkColor: AppColors.primaryColor,
+                    lightColor: AppColors.alternativeColor,
+                    iconSize: 35,
+                    wordID: word.id,
+                    saved: false,
+                    onSaved: (value) async {
+                      !value ? savedWordProvider.addToSaved(word) : null;
+                    },
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     ),

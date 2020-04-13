@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class FaSlideAnimation extends StatefulWidget {
   final Widget child;
   final int delayed;
-  FaSlideAnimation({this.child,this.delayed});
+  final bool isReserve;
+  FaSlideAnimation({this.child, this.delayed, this.isReserve = false});
   @override
   _FaSlideAnimationState createState() => _FaSlideAnimationState();
 }
@@ -19,19 +20,28 @@ class _FaSlideAnimationState extends State<FaSlideAnimation> with TickerProvider
     animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     animation = Tween(begin: Offset(0, 1), end: Offset.zero)
         .animate(CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn));
-    Timer(Duration(milliseconds: widget.delayed),(){
-          animationController.forward();
-    });
+    if (widget.isReserve == false) {
+      Timer(Duration(milliseconds: widget.delayed), () {
+        animationController.forward();
+      });
+    }
+    if (widget.isReserve) {
+      Timer(Duration(milliseconds: widget.delayed), () {
+        animationController.reverse();
+      });
+    }
   }
+
   @override
   void dispose() {
-    super.dispose();
     animationController.dispose();
+    super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return SlideTransition(
-     position: animation,
+      position: animation,
       child: FadeTransition(
         opacity: animationController,
         child: widget.child,

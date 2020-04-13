@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hive/hive.dart';
+import 'package:revocabulary/class/Word.dart';
 import 'package:revocabulary/screen/Dashboard/dashboard.dart';
 import 'package:revocabulary/screen/Saved/saved.dart';
 import 'package:revocabulary/values/AppColors.dart';
@@ -19,12 +21,16 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     pageController = PageController();
+    openHive();
   }
   @override
   void dispose() {
     pageController.dispose();
     super.dispose();
 
+  }
+  Future openHive()async{
+    await Hive.openBox<Word>('word');
   }
   @override
   Widget build(BuildContext context) {
