@@ -20,22 +20,22 @@ class _FaSlideAnimationState extends State<FaSlideAnimation> with TickerProvider
     animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     animation = Tween(begin: Offset(0, 1), end: Offset.zero)
         .animate(CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn));
-    if (widget.isReserve == false) {
-      Timer(Duration(milliseconds: widget.delayed), () {
+    Timer(Duration(milliseconds: widget.delayed), () {
         animationController.forward();
       });
-    }
-    if (widget.isReserve) {
+  
+    /*if (widget.isReserve) {
       Timer(Duration(milliseconds: widget.delayed), () {
         animationController.reverse();
       });
-    }
+    }*/
   }
 
   @override
   void dispose() {
     animationController.dispose();
     super.dispose();
+   
   }
 
   @override

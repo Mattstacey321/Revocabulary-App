@@ -34,6 +34,46 @@ class GraphQLQuery{
     }
 
   """;
-  
-  
+  String getTenseTitle() => """
+    query{
+      getTense{
+        type
+      }
+    }
+  """;
+  String getTenseDetail(String type) => """
+    query{
+      getTenseByName(type:"$type"){
+        type
+        definition
+        structure{
+          type
+          formula
+          note
+        }
+        usage{
+          title
+          content
+          example
+        }
+        hint{
+          title
+          content
+          example
+        }
+        rule{
+          title
+          content
+          example
+        }
+     }
+  }
+    
+  """;
+  String getTenseByName(String name) => """
+    query{
+      
+    }
+
+  """;
 }
