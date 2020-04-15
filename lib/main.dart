@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:revocabulary/class/Word.dart';
 import 'package:revocabulary/screen/Home/home.dart';
+import 'package:revocabulary/screen/PhraseVerb/phraseProvider.dart';
 import 'package:revocabulary/screen/Saved/SavedWordProvider.dart';
 import 'package:revocabulary/screen/SplashScreen/splashScreen.dart';
 import 'package:revocabulary/screen/Test_Word/testProvider.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
         child: Injector(inject: [
           Inject(()=>WordProvider()),
           Inject(()=>SavedWordProvider()),
-          Inject(()=>TestProvider())
+          Inject(()=>TestProvider()),
+          Inject(()=>PhraseProvider())
 
         ], builder: (context) => StateBuilder(
           models:[],

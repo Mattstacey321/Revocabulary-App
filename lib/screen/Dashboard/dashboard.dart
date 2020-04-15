@@ -8,7 +8,6 @@ import 'package:revocabulary/screen/Vocabulary/vocabulary.dart';
 import 'package:revocabulary/values/AppColors.dart';
 import 'package:revocabulary/widget/AnchoredOverlay.dart';
 import 'package:revocabulary/widget/faslideAnimation.dart';
-import 'package:revocabulary/widget/slideAnimation.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -144,71 +143,80 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         )),
                         Row(
                           children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                SizedBox(height: 40),
-                                CardTitle(
-                                  color: AppColors.secondaryColor,
-                                  text: "Vocabulary",
-                                  alignment: Alignment.topCenter,
-                                  top: -25,
-                                  left: 75,
-                                  onPress: (String value) {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => Vocabulary(),
-                                    ));
-                                  },
-                                  circleColor: Color(0xffFC7C1D),
-                                ),
-                                SizedBox(height: 20),
-                                CardTitle(
-                                  color: AppColors.blue,
-                                  text: "Phrases",
-                                  alignment: Alignment.centerLeft,
-                                  left: -25,
-                                  top: 30,
-                                  circleColor: Color(0xff6278E3),
-                                  onPress: (String value) {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => PhraseVerb(),
-                                    ));
-                                  },
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            Column(
-                              children: <Widget>[
-                                Hero(
-                                  tag: "grammar",
-                                  child: CardTitle(
-                                    color: AppColors.blueBold,
-                                    text: "Grammar",
-                                    alignment: Alignment.topRight,
-                                    right: 25,
+                            FaSlideAnimation(
+                              delayed: 200,
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(height: 40),
+                                  CardTitle(
+                                    color: AppColors.secondaryColor,
+                                    text: "Vocabulary",
+                                    alignment: Alignment.topCenter,
                                     top: -25,
-                                    circleColor: Color(0xff516AE2),
+                                    left: 75,
                                     onPress: (String value) {
                                       Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => Grammar(),
+                                        builder: (context) => Vocabulary(),
                                       ));
                                     },
+                                    circleColor: Color(0xffFC7C1D),
                                   ),
-                                ),
-                                SizedBox(height: 20),
-                                CardTitle(
-                                  color: AppColors.primaryColor,
-                                  text: "Idioms",
-                                  alignment: Alignment.bottomRight,
-                                  bottom: -25,
-                                  left: 75,
-                                  circleColor: Color(0xffFDC17C),
-                                  onPress: (String value) {
-                                    Fluttertoast.showToast(
-                                        msg: "WIP", gravity: ToastGravity.BOTTOM);
-                                  },
-                                )
-                              ],
+                                  SizedBox(height: 20),
+                                  Hero(
+                                    tag: "phrase",
+                                    child: CardTitle(
+                                      color: AppColors.blue,
+                                      text: "Phrases",
+                                      alignment: Alignment.centerLeft,
+                                      left: -25,
+                                      top: 30,
+                                      circleColor: Color(0xff6278E3),
+                                      onPress: (String value) {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => PhraseVerb(),
+                                        ));
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Spacer(),
+                            FaSlideAnimation(
+                              delayed: 250,
+                              child: Column(
+                                children: <Widget>[
+                                  Hero(
+                                    tag: "grammar",
+                                    child: CardTitle(
+                                      color: AppColors.blueBold,
+                                      text: "Grammar",
+                                      alignment: Alignment.topRight,
+                                      right: 25,
+                                      top: -25,
+                                      circleColor: Color(0xff516AE2),
+                                      onPress: (String value) {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => Grammar(),
+                                        ));
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  CardTitle(
+                                    color: AppColors.primaryColor,
+                                    text: "Idioms",
+                                    alignment: Alignment.bottomRight,
+                                    bottom: -25,
+                                    left: 75,
+                                    circleColor: Color(0xffFDC17C),
+                                    onPress: (String value) {
+                                      Fluttertoast.showToast(
+                                          msg: "WIP", gravity: ToastGravity.BOTTOM);
+                                    },
+                                  )
+                                ],
+                              ),
                             )
                           ],
                         ),

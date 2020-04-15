@@ -70,10 +70,31 @@ class GraphQLQuery{
   }
     
   """;
-  String getTenseByName(String name) => """
+  String searchPhrase(String term) => """
     query{
-      
+      searchPhrase(term:"$term"){
+          phrase
+          word_type
+          synonym
+          meaning
+          example
+        }
     }
-
+  """;
+  
+  String fetchPhrase(int limit,String nextPage,String previousPage) =>"""
+    query{
+      fetchPhrase(limit:$limit,next:"$nextPage",previous:"$previousPage"){
+        docs{
+          phrase
+          word_type
+          synonym
+          meaning
+          example
+        }
+        next
+        previous
+      }
+    }
   """;
 }

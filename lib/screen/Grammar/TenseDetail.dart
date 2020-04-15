@@ -7,6 +7,7 @@ import 'package:revocabulary/config/config.dart';
 import 'package:revocabulary/values/AppColors.dart';
 import 'package:revocabulary/values/AppConstraint.dart';
 import 'package:revocabulary/widget/circleIcon.dart';
+import 'package:revocabulary/widget/exampleWidget.dart';
 
 class TenseDetail extends StatefulWidget {
   final String type;
@@ -18,7 +19,13 @@ class TenseDetail extends StatefulWidget {
 class _TenseDetailState extends State<TenseDetail> {
   var query = GraphQLQuery();
   var titleStyle =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.secondaryColor);
+      TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: AppColors.secondaryColor);
+  var contentStyle = TextStyle(fontSize: 20);
+
+  String fitText(String text) {
+    return """${ text.replaceRange(0, 1, text[0].toUpperCase())}""";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,195 +71,65 @@ class _TenseDetailState extends State<TenseDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "1./ Define:",
+                            "1. Define:",
                             style: titleStyle,
-                          ),
-                          Container(
-                            height: 50,
-                            child: Text(
-                              tense.definition,
-                              overflow: TextOverflow.ellipsis,
-                            ),
                           ),
                           Text(
-                            "2./ Structure:",
-                            style: titleStyle,
-                          ),
-                          Flexible(
-                            child: ListView.builder(
-                              itemCount: tense.structure.length,
-                              itemBuilder: (context, index) => Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.check_box,
-                                        size: 10,
-                                      ),
-                                      Text(tense.structure[index].type ?? "Hello"),
-                                    ],
-                                  ),
-                                  Text(tense.structure[index].formula)
-                                ],
-                              ),
-                            ),
+                            fitText(tense.definition),
+                            style: contentStyle,
                           ),
                           Text(
-                            "3./ Usage:",
+                            "2. Structure:",
                             style: titleStyle,
                           ),
-                          Flexible(
-                            child: ListView.builder(
-                              itemCount: tense.usage.length,
-                              itemBuilder: (context, index) => Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.check_box,
-                                        size: 10,
-                                      ),
-                                      Text(tense.usage[index].title ?? "Hello"),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: <Widget>[
-                                      for (var item in tense.usage[index].content)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.check_box,
-                                              size: 10,
-                                            ),
-                                            Text(item)
-                                          ],
-                                        ),
-                                      for (var item in tense.usage[index].example)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.check_box,
-                                              size: 10,
-                                            ),
-                                            Text(item)
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                          for (var index = 0; index < tense.structure.length - 1; index++)
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.check_circle,
+                                      size: 15,
+                                    ),
+                                    SizedBox(width: 10,),
+                                    Text(fitText(tense.structure[index].type) ?? "Hello",
+                                        style: contentStyle),
+                                  ],
+                                ),
+                                Text(tense.structure[index].formula,style: TextStyle(fontWeight: FontWeight.bold,fontSize:15),)
+                              ],
                             ),
+                          Text(
+                            "3. Usage:",
+                            style: titleStyle,
+                          ),
+                          ExampleWidget(
+                            object: tense.usage,
                           ),
                           Text(
-                            "4./ Hint:",
+                            "4. Hint:",
                             style: titleStyle,
                           ),
-                          Flexible(
-                            child: ListView.builder(
-                              itemCount: tense.hint.length,
-                              itemBuilder: (context, index) => Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.check_box,
-                                        size: 10,
-                                      ),
-                                      Text(tense.hint[index].title ?? "Hello"),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: <Widget>[
-                                      for (var item in tense.hint[index].content)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.check_box,
-                                              size: 10,
-                                            ),
-                                            Text(item)
-                                          ],
-                                        ),
-                                      for (var item in tense.hint[index].example)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.check_box,
-                                              size: 10,
-                                            ),
-                                            Text(item)
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                          ExampleWidget(
+                            object: tense.hint,
                           ),
-                          Text(
-                            "5./ Rule:",
-                            style: titleStyle,
-                          ),
-                          Flexible(
-                            child: ListView.builder(
-                              itemCount: tense.rule.length,
-                              itemBuilder: (context, index) => Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.check_box,
-                                        size: 10,
-                                      ),
-                                      Text(tense.rule[index].title ?? "Hello"),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: <Widget>[
-                                      for (var item in tense.rule[index].content)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.check_box,
-                                              size: 10,
-                                            ),
-                                            Text(item)
-                                          ],
-                                        ),
-                                      for (var item in tense.rule[index].example)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.check_box,
-                                              size: 10,
-                                            ),
-                                            Text(item)
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          tense.rule.length > 0
+                              ? Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                   children: <Widget>[
+                                    Text(
+                                      "5. Rule:",
+                                      style: titleStyle,
+                                    ),
+                                    ExampleWidget(
+                                      object: tense.rule,
+                                    )
+                                  ],
+                                )
+                              : Container(),
                         ],
                       ),
                     );

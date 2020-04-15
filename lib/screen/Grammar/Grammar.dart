@@ -95,7 +95,7 @@ class _GrammarState extends State<Grammar> {
                                   tileMode: TileMode.mirror,
                                   colors: [AppColors.primaryColor, AppColors.secondaryColor])),
                           child: Text(
-                            "Thì",
+                            "Tense",
                             style: TextStyle(color: Colors.white, fontSize: 30),
                           ),
                         ),
