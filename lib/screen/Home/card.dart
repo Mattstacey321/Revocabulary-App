@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_widgets/responsive_widgets.dart';
 
 class CardTitle extends StatelessWidget {
   final String text;
@@ -29,16 +30,16 @@ class CardTitle extends StatelessWidget {
         onTap: () {
           return onPress(type);
         },
-        child: Container(
+        child: ContainerResponsive(
           alignment: Alignment.center,
-          height: screenSize.aspectRatio* 180,
-          width: screenSize.aspectRatio* 300,
+          height: 100,
+          width: 150,
           decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(15)),
           child: Stack(
             children: <Widget>[
               Align(
                   alignment: Alignment.center,
-                  child: Text(
+                  child: TextResponsive(
                     text,
                     style:
                         TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
@@ -50,7 +51,7 @@ class CardTitle extends StatelessWidget {
                 right: right,
                 child: Align(
                   alignment: alignment,
-                  child: Container(
+                  child: ContainerResponsive(
                     height: 50,
                     width: 50,
                     decoration: BoxDecoration(color: circleColor, shape: BoxShape.circle),

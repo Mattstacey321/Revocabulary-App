@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:responsive_widgets/responsive_widgets.dart';
 import 'package:revocabulary/class/Tense.dart';
 import 'package:revocabulary/config/Query.dart';
 import 'package:revocabulary/config/config.dart';
@@ -50,8 +51,8 @@ class _TenseDetailState extends State<TenseDetail> {
           ),
           preferredSize: Size.fromHeight(40)),
       body: SingleChildScrollView(
-        child: Container(
-            height: AppConstraint.getScreenSize(context).height,
+        child: ContainerResponsive(
+            height: AppConstraint.getScreenSize(context).height ,
             child: GraphQLProvider(
               client: customClient(),
               child: CacheProvider(
@@ -66,7 +67,7 @@ class _TenseDetailState extends State<TenseDetail> {
                     var tense = Tense.fromJson(result.data['getTenseByName']);
 
                     return Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsetsResponsive.all(10.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -84,7 +85,6 @@ class _TenseDetailState extends State<TenseDetail> {
                           ),
                           for (var index = 0; index < tense.structure.length - 1; index++)
                             Column(
-                             
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
@@ -92,47 +92,51 @@ class _TenseDetailState extends State<TenseDetail> {
                                       Icons.check_circle,
                                       size: 15,
                                     ),
-                                    SizedBox(
+                                    SizedBoxResponsive(
                                       width: 10,
                                     ),
-                                    Text(fitText(tense.structure[index].type) ?? "Hello",
+                                    TextResponsive(fitText(tense.structure[index].type) ?? "Hello",
                                         style: contentStyle),
                                   ],
                                 ),
-                                Text(
+                                TextResponsive(
                                   tense.structure[index].formula,
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                                 )
                               ],
                             ),
-                          Text(
+                          TextResponsive(
                             "3. Usage:",
                             style: titleStyle,
                           ),
                           ExampleWidget(
+                            
                             object: tense.usage,
                           ),
-                          Text(
+                          TextResponsive(
                             "4. Hint:",
                             style: titleStyle,
                           ),
                           ExampleWidget(
+                       
                             object: tense.hint,
                           ),
                           tense.rule.length > 0
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                      "5. Rule:",
-                                      style: titleStyle,
-                                    ),
-                                    ExampleWidget(
-                                      object: tense.rule,
-                                    )
-                                  ],
+                              ? Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      TextResponsive(
+                                        "5. Rule:",
+                                        style: titleStyle,
+                                      ),
+                                      ExampleWidget(
+                                        
+                                        object: tense.rule,
+                                      )
+                                    ],
+                                  ),
                                 )
                               : Container(),
                         ],

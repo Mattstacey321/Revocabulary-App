@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:responsive_widgets/responsive_widgets.dart';
 import 'package:revocabulary/class/Word.dart';
 import 'package:revocabulary/screen/Saved/SavedWordProvider.dart';
 import 'package:revocabulary/screen/Test_Word/testMemorize.dart';
@@ -50,8 +51,8 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
           showDeleteIcon = false;
         });
       },
-      child: Container(
-        padding: EdgeInsets.all(10),
+      child: ContainerResponsive(
+        padding: EdgeInsetsResponsive.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,11 +60,11 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
             FaSlideAnimation(
               delayed: 200,
               child: Padding(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsetsResponsive.all(10),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text("Saved", style: TextStyle(color: AppColors.primaryColor, fontSize: 40)),
+                    TextResponsive("Saved", style: TextStyle(color: AppColors.primaryColor, fontSize: ScreenUtil().setSp(35))),
                     Spacer(),
                     FaSlideAnimation(
                       delayed: 500,
@@ -72,7 +73,7 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
                         child: CircleIcon(
                           icon: FeatherIcons.play,
                           iconColor: word.isEmpty ?AppColors.secondaryColor :AppColors.primaryColor,
-                          iconSize: 35,
+                          iconSize: 30,
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => TestYourMemorize(),
@@ -86,7 +87,7 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
                       child: CircleIcon(
                         icon: FeatherIcons.search,
                         iconColor: AppColors.primaryColor,
-                        iconSize: 35,
+                        iconSize: 30,
                         onTap: () {},
                       ),
                     )
@@ -95,7 +96,7 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
               ),
             ),
             word.listenable().value == null
-                ? Container(
+                ? ContainerResponsive(
                     child: Image.asset("assets/pngs/no_data.png"),
                   )
                 : Expanded(
@@ -117,7 +118,7 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
                                 FaSlideAnimation(
                                   delayed: 200,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
+                                    padding: EdgeInsetsResponsive.symmetric(horizontal: 20,vertical: 10),
                                     child: Material(
                                       clipBehavior: Clip.antiAlias,
                                       borderRadius: BorderRadius.circular(15),
@@ -131,7 +132,7 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
                                             showDeleteIcon = true;
                                           });
                                         },
-                                        child: Container(
+                                        child: ContainerResponsive(
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(boxShadow: [
                                             BoxShadow(
@@ -139,7 +140,7 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
                                                 offset: Offset(1, 2),
                                                 color: AppColors.alternativeColor.withOpacity(0.1))
                                           ], borderRadius: BorderRadius.circular(15)),
-                                          child: Text(
+                                          child: TextResponsive(
                                             words.getAt(index).word,
                                             style: TextStyle(
                                                 fontSize: 25,

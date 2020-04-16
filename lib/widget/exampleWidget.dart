@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_widgets/responsive_widgets.dart';
 import 'package:revocabulary/values/AppColors.dart';
 
 class ExampleWidget extends StatefulWidget {
   final int length;
   final List object;
-
-  const ExampleWidget({this.length, this.object});
+  final int flex;
+  const ExampleWidget({this.length, this.object,this.flex = 1});
   @override
   _ExampleWidgetState createState() => _ExampleWidgetState();
 }
@@ -16,56 +17,62 @@ class _ExampleWidgetState extends State<ExampleWidget> {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppColors.alternativeColor,
-            borderRadius: BorderRadius.circular(15)
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      
+      flex: widget.flex,
+        child: ContainerResponsive(
+      padding: EdgeInsetsResponsive.all(10),
+      decoration:
+          BoxDecoration(color: AppColors.alternativeColor, borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
           for (index = 0;
               index < widget.object.length - 1;
               setState(() {
             index++;
           }))
             Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text("""- ${widget.object[index].title}""" ?? "Hello", style: contentStyle,textAlign: TextAlign.justify,),
+                TextResponsive(
+                  """- ${widget.object[index].title}""" ?? "Hello",
+                  style: contentStyle,
+                  textAlign: TextAlign.justify,
+                ),
               ],
             ),
-          Container(
-            margin: EdgeInsets.only(left: 20),
+          ContainerResponsive(
+            margin: EdgeInsetsResponsive.only(left: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 for (var item in widget.object[index].content)
-                   Column(
-                      children: <Widget>[Text("""${String.fromCharCode(0x2022)} $item""")],
-                    ),
-                  Text("-> Example:",style: TextStyle(fontWeight: FontWeight.bold),),
+                  Column(
+                    children: <Widget>[Text("""${String.fromCharCode(0x2022)} $item""")],
+                  ),
+                TextResponsive(
+                  "-> Example:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 for (var item in widget.object[index].example)
-                  Container(
-                    margin: EdgeInsets.only(left:10),
+                  ContainerResponsive(
+                    margin: EdgeInsets.only(left: 10),
                     child: Column(
-                      children: <Widget>[
-                        
-                        
-                        Text("""$item""")
-                      ],
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[TextResponsive("""$item""")],
                     ),
                   ),
               ],
             ),
           ),
-      ],
-    ),
-        ));
+        ],
+      ),
+    ));
   }
 }

@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:hive/hive.dart';
+import 'package:responsive_widgets/responsive_widgets.dart';
 import 'package:revocabulary/class/Word.dart';
 import 'package:revocabulary/screen/Test_Word/testProvider.dart';
 import 'package:revocabulary/values/AppColors.dart';
@@ -48,13 +49,13 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
     testProvider = Injector.get(context: context);
 
     return Scaffold(
-      body: Container(
+      body: ContainerResponsive(
         child: Column(
           children: <Widget>[
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                padding: EdgeInsets.only(right: 10),
+                padding: EdgeInsetsResponsive.only(right: 10),
                 height: 50,
                 width: screenSize.width,
                 child: Row(
@@ -68,12 +69,12 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                         Navigator.of(context).pop();
                       },
                     ),
-                    Text(
+                    TextResponsive(
                       "Test",
                       style: TextStyle(fontSize: 30, color: AppColors.primaryColor),
                     ),
                     //update value
-                    Container(
+                    ContainerResponsive(
                       height: 12,
                       width: 50,
                       child: ClipRRect(
@@ -95,7 +96,7 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
               delayed: 500,
               child: carouselSlider = CarouselSlider.builder(
                 enableInfiniteScroll: false,
-                height: 400,
+                height: screenSize.height / 2,
                 itemCount: word.length,
                 enlargeCenterPage: true,
                 onPageChanged: (index) {
@@ -103,8 +104,8 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                   animationController.reverse();
                   testProvider.setIndex(index);
                 },
-                itemBuilder: (context, index) => Container(
-                  margin: EdgeInsets.all(20),
+                itemBuilder: (context, index) => ContainerResponsive(
+                  margin: EdgeInsetsResponsive.all(20),
                   width: screenSize.width,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
@@ -115,7 +116,7 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                         top: screenSize.height * 0.1,
                         child: Align(
                             alignment: Alignment.topCenter,
-                            child: Text(
+                            child: TextResponsive(
                               word
                                   .getAt(index)
                                   .word
@@ -128,7 +129,7 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                       ),
                       Positioned(
                           top: screenSize.height * 0.2,
-                          left: screenSize.width / 2 * 0.63,
+                          left: screenSize.width / 2 * 0.60,
                           child: Align(
                             alignment: Alignment.center,
                             child: CircleIcon(
@@ -142,8 +143,8 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                           bottom: 10,
                           child: Align(
                             alignment: Alignment.bottomCenter,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: ContainerResponsive(
+                              padding: EdgeInsetsResponsive.symmetric(horizontal: 20),
                               width: screenSize.width / 1.4,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,7 +172,7 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                                               : animationController.forward();
                                         },
                                       ),
-                                      Text("Show meaning",
+                                      TextResponsive("Show meaning",
                                           style: TextStyle(fontWeight: FontWeight.bold))
                                     ],
                                   ),
@@ -187,7 +188,7 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
                                               curve: Curves.fastOutSlowIn);
                                         },
                                       ),
-                                      Text(
+                                      TextResponsive(
                                         "I know",
                                         style: TextStyle(fontWeight: FontWeight.bold),
                                       )
@@ -206,11 +207,11 @@ class _TestYourMemorizeState extends State<TestYourMemorize> with TickerProvider
               child: SlideTransition(
                 position: animation,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Container(
+                  padding: EdgeInsetsResponsive.all(20.0),
+                  child: ContainerResponsive(
                     alignment: Alignment.center,
                     width: screenSize.width,
-                    child: Container(
+                    child: ContainerResponsive(
                       alignment: Alignment.center,
                       height: 200,
                       width: screenSize.width / 1.5,

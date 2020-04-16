@@ -19,6 +19,7 @@ class _CircleIconState extends State<CircleIcon> {
       color: Colors.transparent,
       type: MaterialType.circle,
       child: IconButton(
+      
         icon: Icon(widget.icon),
         onPressed: () {
           return widget.onTap();
