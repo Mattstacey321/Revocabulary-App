@@ -97,4 +97,18 @@ class GraphQLQuery{
       }
     }
   """;
+  String fetchIndiom(int limit,String nextPage,String previousPage) => """
+    query{
+      fetchIndiom(limit:$limit,next:"$nextPage",previous:"$previousPage"){
+        docs{
+          indiom
+          meaning_in_vi
+          meaning_in_en
+        }
+        next
+        previous
+      }
+    }
+
+  """;
 }

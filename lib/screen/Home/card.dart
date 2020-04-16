@@ -22,6 +22,7 @@ class CardTitle extends StatelessWidget {
       this.onPress});
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     String type = text;
     return Material(
       child: InkWell(
@@ -30,8 +31,8 @@ class CardTitle extends StatelessWidget {
         },
         child: Container(
           alignment: Alignment.center,
-          height: 120,
-          width: 200,
+          height: screenSize.aspectRatio* 180,
+          width: screenSize.aspectRatio* 300,
           decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(15)),
           child: Stack(
             children: <Widget>[

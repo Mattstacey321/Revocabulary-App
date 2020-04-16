@@ -23,7 +23,7 @@ class _TenseDetailState extends State<TenseDetail> {
   var contentStyle = TextStyle(fontSize: 20);
 
   String fitText(String text) {
-    return """${ text.replaceRange(0, 1, text[0].toUpperCase())}""";
+    return """${text.replaceRange(0, 1, text[0].toUpperCase())}""";
   }
 
   @override
@@ -84,7 +84,7 @@ class _TenseDetailState extends State<TenseDetail> {
                           ),
                           for (var index = 0; index < tense.structure.length - 1; index++)
                             Column(
-                              mainAxisSize: MainAxisSize.min,
+                             
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
@@ -92,12 +92,17 @@ class _TenseDetailState extends State<TenseDetail> {
                                       Icons.check_circle,
                                       size: 15,
                                     ),
-                                    SizedBox(width: 10,),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
                                     Text(fitText(tense.structure[index].type) ?? "Hello",
                                         style: contentStyle),
                                   ],
                                 ),
-                                Text(tense.structure[index].formula,style: TextStyle(fontWeight: FontWeight.bold,fontSize:15),)
+                                Text(
+                                  tense.structure[index].formula,
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                )
                               ],
                             ),
                           Text(
@@ -116,10 +121,10 @@ class _TenseDetailState extends State<TenseDetail> {
                           ),
                           tense.rule.length > 0
                               ? Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                   children: <Widget>[
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
                                     Text(
                                       "5. Rule:",
                                       style: titleStyle,

@@ -7,33 +7,38 @@ class WordProvider extends StatesRebuilder {
   bool fetchError = false;
   String next = "";
   String previous = "";
-  bool reachedEnd = false;
+  bool isLoading = false;
 
   Future<void> initLoad() async {
+    setLoading(true);
     try {
       var result = await WordService.fetchWord(10, "", "");
       this.next = result.next;
       this.previous = result.previous;
       listWords.addAll(result.words);
+      setLoading(false);
       rebuildStates();
     } catch (e) {
       print(e);
-      fetchError =true;
+      fetchError = true;
+      setLoading(false);
       rebuildStates();
     }
   }
 
   Future loadMore() async {
-    print("next token ${this.next}");
-    var result = await WordService.fetchWord(10, this.next, "");
-    if (result.next == null) {
-      reachedEnd = true;
-      return;
-    } else {
-      this.next = result.next;
-      this.previous = result.previous;
-      result.words.isEmpty ? listWords.addAll([]) : listWords.addAll(result.words);
+    if (this.next != "") {
+      var result = await WordService.fetchWord(10, this.next, "");
+      this.next = result.next ?? "";
+      if (result.next == "") {
+        setLoading(false);
+        return;
+      }
+
+      listWords.addAll(result.words);
       rebuildStates();
+    } else {
+      return;
     }
   }
 
@@ -46,7 +51,12 @@ class WordProvider extends StatesRebuilder {
     });
   }
 
-  void hasReachedEnd() {
-    this.reachedEnd = true;
+  Future clear() async{
+    listWords.clear();
+  }
+
+  void setLoading(bool setLoading) {
+    isLoading = setLoading;
+    rebuildStates();
   }
 }

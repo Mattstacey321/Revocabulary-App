@@ -35,6 +35,7 @@ class PhraseProvider extends StatesRebuilder {
       print(result.phrases.length);
       if (result.next == "") {
         setLoading(false);
+        return;
       }
       nextPage = result.next;
       phrases.addAll(result.phrases);

@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:revocabulary/class/Word.dart';
@@ -42,11 +43,7 @@ class _VocabularyState extends State<Vocabulary> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     if (currentScroll == maxScroll) {
-      print(wordProvider.reachedEnd);
-      if (wordProvider.reachedEnd) {
-        return;
-      } else
-        wordProvider.loadMore();
+      wordProvider.loadMore();
     }
   }
 
@@ -61,71 +58,81 @@ class _VocabularyState extends State<Vocabulary> {
   Widget build(BuildContext context) {
     wordProvider = Injector.get(context: context);
     savedWordProvider = Injector.get(context: context);
-    return Scaffold(
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(20),
-              height: 80,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Vocabulary", style: TextStyle(color: AppColors.primaryColor, fontSize: 40)),
-                  Spacer(),
-                  Material(
-                      clipBehavior: Clip.antiAlias,
-                      type: MaterialType.circle,
-                      color: Colors.transparent,
-                      child: IconButton(
-                          icon: Icon(
-                            FeatherIcons.sliders,
-                            color: AppColors.primaryColor,
-                            size: 25,
-                          ),
-                          onPressed: () {}))
-                ],
-              ),
-            ),
-            wordProvider.listWords.isEmpty
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : wordProvider.fetchError
-                    ? Text("Fetch error")
-                    : Expanded(
-                        child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 30),
-                        child: RefreshIndicator(
-                          onRefresh: () => wordProvider.refresh(),
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) => SizedBox(
-                              height: 20,
+    return Hero(
+      tag: "vocabulary",
+      child: Scaffold(
+        body: WillPopScope(
+          onWillPop: () async{
+             wordProvider.clear();
+             return true;
+          },
+                  child: Container(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(20),
+                  height: 80,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Vocabulary",
+                          style: TextStyle(color: AppColors.primaryColor, fontSize: 40)),
+                      Spacer(),
+                      Material(
+                          clipBehavior: Clip.antiAlias,
+                          type: MaterialType.circle,
+                          color: Colors.transparent,
+                          child: IconButton(
+                              icon: Icon(
+                                FeatherIcons.sliders,
+                                color: AppColors.primaryColor,
+                                size: 25,
+                              ),
+                              onPressed: () {}))
+                    ],
+                  ),
+                ),
+                wordProvider.listWords.isEmpty
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : wordProvider.fetchError
+                        ? Text("Fetch error")
+                        : Expanded(
+                            child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 30),
+                            child: RefreshIndicator(
+                              onRefresh: () => wordProvider.refresh(),
+                              child: ListView.separated(
+                                separatorBuilder: (context, index) => SizedBox(
+                                  height: 20,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return index >= wordProvider.listWords.length
+                                      ? wordProvider.next == ""
+                                          ? Text("You reach end")
+                                          : buildLoadMore()
+                                      : buildWordItem(
+                                          context,
+                                          wordProvider.listWords[index].id,
+                                          wordProvider.listWords[index],
+                                          wordProvider.listWords[index].meaning[0],
+                                          "",
+                                          savedWordProvider);
+                                },
+                                // add more 1 to make space for loading icon
+                                itemCount: wordProvider.next == ""
+                                    ? wordProvider.listWords.length
+                                    : wordProvider.listWords.length + 1,
+                                controller: _scrollController,
+                                addAutomaticKeepAlives: true,
+                              ),
                             ),
-                            itemBuilder: (context, index) {
-                              return index >= wordProvider.listWords.length
-                                  ? wordProvider.next == ""
-                                      ? Text("You reach end")
-                                      : buildLoadMore()
-                                  : buildWordItem(
-                                      context,
-                                      wordProvider.listWords[index].id,
-                                      wordProvider.listWords[index],
-                                      wordProvider.listWords[index].meaning[0],
-                                      "",
-                                      savedWordProvider);
-                            },
-                            // add more 1 to make space for loading icon
-                            itemCount: wordProvider.next == ""
-                                ? wordProvider.listWords.length
-                                : wordProvider.listWords.length + 1,
-                            controller: _scrollController,
-                            addAutomaticKeepAlives: true,
-                          ),
-                        ),
-                      ))
-          ],
+                          ))
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -174,6 +181,16 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
                     builder: (result, {fetchMore, refetch}) {
                       if (result.loading) {
                         return Container(
+                          height: MediaQuery.of(context).size.height - 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                        /*Container(
                           height: MediaQuery.of(context).size.height - 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -303,13 +320,14 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
                               )
                             ],
                           ),
-                        );
+                        );*/
                       }
                       if (result.hasException) {
                         print(result.exception);
                         return Container();
                       } else {
                         var word = Word.fromJson(result.data['getWord']);
+                        print(word.partOfSpeech.length);
                         return Container(
                           height: MediaQuery.of(context).size.height - 100,
                           decoration: BoxDecoration(
@@ -319,15 +337,16 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
                           child: Column(
                             children: <Widget>[
                               Expanded(
-                                  flex: 2,
+                                  flex: 4,
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    margin: EdgeInsets.only(top: 20),
                                     child: Row(
                                       children: <Widget>[
-                                        buildWordAndImage(word),
+                                        buildWordAndImage(context, word),
                                         Spacer(),
                                         Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: <Widget>[
                                             buildExampleImage(120, 120, word.imageExample)
                                           ],
@@ -336,12 +355,16 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
                                     ),
                                   )),
                               Expanded(
-                                flex: 6,
+                                flex: 7,
                                 child: Container(
                                   child: Column(
                                     children: <Widget>[
-                                      buildPartOfSpeech(context, controller, word),
-                                      buildExampleAndSynonym(screenSize.width, word)
+                                      Expanded(
+                                          flex: 2,
+                                          child: buildPartOfSpeech(context, controller, word)),
+                                      Expanded(
+                                          flex: 8,
+                                          child: buildExampleAndSynonym(screenSize.width, word))
                                     ],
                                   ),
                                 ),
@@ -433,11 +456,10 @@ Widget buildWordItem(BuildContext context, String id, Word word, String meaning,
   );
 }
 
-Widget buildWordAndImage(Word word) {
+Widget buildWordAndImage(BuildContext context, Word word) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min,
     children: <Widget>[
       Text(
         word.word,
@@ -446,7 +468,7 @@ Widget buildWordAndImage(Word word) {
       Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(word.phonetic,
+          Text("US: ${word.phonetic}",
               style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: "Roboto")),
           CircleIcon(
             icon: FeatherIcons.volume2,
@@ -458,7 +480,26 @@ Widget buildWordAndImage(Word word) {
           )
         ],
       ),
-      SizedBox(height: 10),
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text("UK: ${word.phonetic}",
+              style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: "Roboto")),
+          CircleIcon(
+            icon: FeatherIcons.volume2,
+            iconSize: 20,
+            onTap: () async {
+              FlutterTts flutterTts = FlutterTts();
+              await flutterTts.setVolume(1);
+               await flutterTts.isLanguageAvailable("UK");
+               await flutterTts.setSpeechRate(0.5);
+            
+              await flutterTts.speak(word.word);
+   
+            },
+          )
+        ],
+      ),
       Container(
         height: 40,
         width: 100,
@@ -472,8 +513,7 @@ Widget buildWordAndImage(Word word) {
 }
 
 Widget buildExampleAndSynonym(double width, Word word) {
-  return Expanded(
-      child: Padding(
+  return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
     child: Container(
       width: width,
@@ -485,7 +525,7 @@ Widget buildExampleAndSynonym(double width, Word word) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
-            flex: 3,
+            flex: 4,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -530,9 +570,8 @@ Widget buildExampleAndSynonym(double width, Word word) {
               ],
             ),
           ),
-          Spacer(),
           Expanded(
-              flex: 5,
+              flex: 6,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -555,14 +594,15 @@ Widget buildExampleAndSynonym(double width, Word word) {
                         for (var item in word.synonym)
                           Container(
                             alignment: Alignment.center,
-                            width: 200,
+                            width: 100,
                             height: 50,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
                                 color: AppColors.secondaryColor),
                             child: Text(item,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 25,
+                                    fontSize: 20,
                                     color: AppColors.primaryColor,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.bold)),
@@ -575,14 +615,15 @@ Widget buildExampleAndSynonym(double width, Word word) {
         ],
       ),
     ),
-  ));
+  );
 }
 
 Widget buildPartOfSpeech(BuildContext context, ScrollController controller, Word word) {
-  return word.partOfSpeech[0].word == null
+  return word.partOfSpeech.isEmpty
       ? Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Container(
+            margin: EdgeInsets.only(top: 10),
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,
             height: 150,

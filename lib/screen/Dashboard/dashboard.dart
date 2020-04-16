@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:revocabulary/screen/Grammar/Grammar.dart';
 import 'package:revocabulary/screen/Home/card.dart';
+import 'package:revocabulary/screen/Indiom/indiom.dart';
 import 'package:revocabulary/screen/PhraseVerb/phraseVerb.dart';
 import 'package:revocabulary/screen/Vocabulary/vocabulary.dart';
 import 'package:revocabulary/values/AppColors.dart';
@@ -130,7 +131,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               Expanded(
                   flex: 3,
                   child: Container(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     width: screenSize.width,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,113 +140,132 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                             child: Text(
                           'What you want \nto learn ?',
                           maxLines: 2,
-                          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: screenSize.aspectRatio * 50, fontWeight: FontWeight.bold),
                         )),
-                        Row(
-                          children: <Widget>[
-                            FaSlideAnimation(
-                              delayed: 200,
-                              child: Column(
-                                children: <Widget>[
-                                  SizedBox(height: 40),
-                                  CardTitle(
-                                    color: AppColors.secondaryColor,
-                                    text: "Vocabulary",
-                                    alignment: Alignment.topCenter,
-                                    top: -25,
-                                    left: 75,
-                                    onPress: (String value) {
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => Vocabulary(),
-                                      ));
-                                    },
-                                    circleColor: Color(0xffFC7C1D),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Hero(
-                                    tag: "phrase",
-                                    child: CardTitle(
-                                      color: AppColors.blue,
-                                      text: "Phrases",
-                                      alignment: Alignment.centerLeft,
-                                      left: -25,
-                                      top: 30,
-                                      circleColor: Color(0xff6278E3),
-                                      onPress: (String value) {
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => PhraseVerb(),
-                                        ));
-                                      },
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Spacer(),
-                            FaSlideAnimation(
-                              delayed: 250,
-                              child: Column(
-                                children: <Widget>[
-                                  Hero(
-                                    tag: "grammar",
-                                    child: CardTitle(
-                                      color: AppColors.blueBold,
-                                      text: "Grammar",
-                                      alignment: Alignment.topRight,
-                                      right: 25,
-                                      top: -25,
-                                      circleColor: Color(0xff516AE2),
-                                      onPress: (String value) {
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => Grammar(),
-                                        ));
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  CardTitle(
-                                    color: AppColors.primaryColor,
-                                    text: "Idioms",
-                                    alignment: Alignment.bottomRight,
-                                    bottom: -25,
-                                    left: 75,
-                                    circleColor: Color(0xffFDC17C),
-                                    onPress: (String value) {
-                                      Fluttertoast.showToast(
-                                          msg: "WIP", gravity: ToastGravity.BOTTOM);
-                                    },
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Your test',
-                          maxLines: 2,
-                          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
                         Expanded(
-                            child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 2,
-                                offset: Offset(2, 2),
-                                color: Colors.black12.withOpacity(0.5),
+                          flex: 5,
+                          child: Row(
+                            children: <Widget>[
+                              FaSlideAnimation(
+                                delayed: 0,
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(height: 40),
+                                    Hero(
+                                      tag: "vocabulary",
+                                      child: CardTitle(
+                                        color: AppColors.secondaryColor,
+                                        text: "Vocabulary",
+                                        alignment: Alignment.topCenter,
+                                        top: -25,
+                                        left: 75,
+                                        onPress: (String value) {
+                                          Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) => Vocabulary(),
+                                          ));
+                                        },
+                                        circleColor: Color(0xffFC7C1D),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    Hero(
+                                      tag: "phrase",
+                                      child: CardTitle(
+                                        color: AppColors.blue,
+                                        text: "Phrases",
+                                        alignment: Alignment.centerLeft,
+                                        left: -25,
+                                        top: 30,
+                                        circleColor: Color(0xff6278E3),
+                                        onPress: (String value) {
+                                          Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) => PhraseVerb(),
+                                          ));
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Spacer(),
+                              FaSlideAnimation(
+                                delayed: 250,
+                                child: Column(
+                                  children: <Widget>[
+                                    Hero(
+                                      tag: "grammar",
+                                      child: CardTitle(
+                                        color: AppColors.blueBold,
+                                        text: "Grammar",
+                                        alignment: Alignment.topRight,
+                                        right: 25,
+                                        top: -25,
+                                        circleColor: Color(0xff516AE2),
+                                        onPress: (String value) {
+                                          Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) => Grammar(),
+                                          ));
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    Hero(
+                                      tag: "indiom",
+                                      child: CardTitle(
+                                        color: AppColors.primaryColor,
+                                        text: "Idioms",
+                                        alignment: Alignment.bottomRight,
+                                        bottom: -25,
+                                        left: 75,
+                                        circleColor: Color(0xffFDC17C),
+                                        onPress: (String value) {
+                                          Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context) => Indiom(),
+                                          ));
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
                               )
                             ],
                           ),
-                          child: Text(
-                            "Comming soon",
-                            style: TextStyle(fontSize: 25),
-                          ),
-                        ))
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  'Your test',
+                                  maxLines: 2,
+                                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 10),
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          blurRadius: 2,
+                                          offset: Offset(2, 2),
+                                          color: Colors.black12.withOpacity(0.5),
+                                        )
+                                      ],
+                                    ),
+                                    child: Text(
+                                      "Comming soon",
+                                      style: TextStyle(fontSize: 25),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ))
                       ],
                     ),
                   ))

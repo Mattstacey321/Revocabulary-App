@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:revocabulary/config/Query.dart';
 import 'package:revocabulary/screen/PhraseVerb/phraseProvider.dart';
+import 'package:revocabulary/screen/PhraseVerb/phraseWidget.dart';
 import 'package:revocabulary/values/AppColors.dart';
 import 'package:revocabulary/values/AppConstraint.dart';
 import 'package:revocabulary/widget/circleIcon.dart';
@@ -54,8 +55,10 @@ class PhraseVerbState extends State<PhraseVerb> {
     phraseProvider = Injector.get(context: context);
     var screenSize = AppConstraint.getScreenSize(context);
     var phrases = phraseProvider.phrases;
+
     final double itemHeight = (screenSize.height - kToolbarHeight - 24) / 2;
     final double itemWidth = screenSize.width / 2;
+    
     return Hero(
       tag: "phrase",
       child: Scaffold(
@@ -100,45 +103,10 @@ class PhraseVerbState extends State<PhraseVerb> {
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => FaSlideAnimation(
                                 delayed: 0,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: AppColors.secondaryColor),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            phrases[index].phrase,
-                                            style: TextStyle(
-                                                fontSize: 20, fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      phrases[index].wordType == "" ? Text(
-                                        "${phrases[index].wordType} (v)",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic),
-                                      ) : Text(
-                                        "(${phrases[index].wordType})",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic),
-                                      ),
-                                      Text(
-                                        phrases[index].meaning[0],
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                child:PhraseWidget(
+                                  index: index,
+                                  phrases: phrases,
+                                )
                               ),
                               childCount: phraseProvider.phrases.length,
                               addAutomaticKeepAlives: true,

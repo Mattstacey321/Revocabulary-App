@@ -67,15 +67,18 @@ class _SavedState extends State<Saved> with TickerProviderStateMixin {
                     Spacer(),
                     FaSlideAnimation(
                       delayed: 500,
-                      child: CircleIcon(
-                        icon: FeatherIcons.play,
-                        iconColor: AppColors.primaryColor,
-                        iconSize: 35,
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => TestYourMemorize(),
-                          ));
-                        },
+                      child: IgnorePointer(
+                        ignoring: word.isEmpty ? true : false,
+                        child: CircleIcon(
+                          icon: FeatherIcons.play,
+                          iconColor: word.isEmpty ?AppColors.secondaryColor :AppColors.primaryColor,
+                          iconSize: 35,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => TestYourMemorize(),
+                            ));
+                          },
+                        ),
                       ),
                     ),
                     FaSlideAnimation(
